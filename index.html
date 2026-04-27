@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha de Valorador Aduanero — AsistenteAduanero VEN v2.0</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Mulish:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --navy:  #0B1220;
+  --navy2: #131D2E;
+  --navy3: #1A2740;
+  --gold:  #C9A84C;
+  --gold2: #E8C46A;
+  --gold-l:#F5EDD0;
+  --green: #1FC98E;
+  --green2:#0D8A5F;
+  --green-l:#E6F5EE;
+  --red:   #E05252;
+  --red-l: #FDF0F0;
+  --blue-l:#EAF2FB;
+  --text:  #1A2030;
+  --text2: #4A5568;
+  --muted: #718096;
+  --border:#E2E8F0;
+  --bg:    #F7F8FC;
+  --white: #FFFFFF;
+  --font:  'Syne', sans-serif;
+  --body:  'Mulish', sans-serif;
+  --mono:  'IBM Plex Mono', monospace;
+  --radius:10px;
+  --shadow:0 2px 12px rgba(11,18,32,0.08);
+}
+
+html { scroll-behavior: smooth; }
+body { font-family: var(--body); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; }
+
+/* ── TOP BANNER ── */
+.top-banner {
+  background: var(--navy);
+  padding: 18px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+}
+.banner-logo { display: flex; align-items: center; gap: 12px; }
+.banner-icon {
+  width: 38px; height: 38px; border-radius: 9px;
+  background: linear-gradient(135deg, var(--gold), #8B6B1C);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font); font-weight: 800; font-size: 15px; color: var(--navy);
+}
+.banner-name  { font-family: var(--font); font-size: 15px; font-weight: 700; color: var(--gold); }
+.banner-sub   { font-size: 11px; color: rgba(255,255,255,0.45); font-family: var(--mono); }
+.banner-badge {
+  background: rgba(31,201,142,0.15); border: 1px solid rgba(31,201,142,0.3);
+  border-radius: 20px; padding: 5px 14px;
+  font-size: 11px; font-weight: 600; color: var(--green); font-family: var(--mono);
+}
+
+/* ── CONFIG BAR ── */
+.config-bar {
+  background: var(--navy2); border-bottom: 1px solid rgba(201,168,76,0.2);
+  padding: 10px 32px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.config-bar label { font-size: 11px; color: rgba(255,255,255,0.5); font-family: var(--mono); white-space: nowrap; }
+.config-bar input {
+  flex: 1; min-width: 260px; max-width: 420px;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 7px; padding: 7px 12px;
+  font-family: var(--mono); font-size: 12px; color: rgba(255,255,255,0.85);
+  outline: none; transition: border-color .2s;
+}
+.config-bar input:focus { border-color: var(--gold); }
+.config-bar input::placeholder { color: rgba(255,255,255,0.25); }
+.config-save {
+  background: var(--gold); color: var(--navy); border: none; border-radius: 7px;
+  padding: 7px 16px; font-family: var(--font); font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: opacity .2s; white-space: nowrap;
+}
+.config-save:hover { opacity: .85; }
+
+/* ── PROGRESS NAV ── */
+.progress-nav {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 0 32px; display: flex; gap: 0; overflow-x: auto;
+}
+.step-tab {
+  padding: 14px 18px; font-size: 12px; font-weight: 600;
+  color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent;
+  white-space: nowrap; font-family: var(--font); letter-spacing: .04em;
+  transition: all .2s; display: flex; align-items: center; gap: 7px;
+}
+.step-tab:hover { color: var(--text); }
+.step-tab.active { color: var(--navy); border-bottom-color: var(--gold); }
+.step-tab.done   { color: var(--green2); }
+.step-num {
+  width: 20px; height: 20px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; font-family: var(--mono);
+  background: var(--border); color: var(--muted);
+}
+.step-tab.active .step-num { background: var(--gold); color: var(--navy); }
+.step-tab.done   .step-num { background: var(--green); color: white; }
+
+/* ── LAYOUT ── */
+.container { max-width: 900px; margin: 0 auto; padding: 32px 20px 80px; }
+
+/* ── SECTION CARD ── */
+.section-card {
+  background: var(--white); border-radius: 14px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow); margin-bottom: 24px;
+  overflow: hidden; display: none;
+}
+.section-card.active { display: block; }
+
+.section-header {
+  background: var(--navy); padding: 18px 24px;
+  display: flex; align-items: center; gap: 14px;
+}
+.sec-num {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--gold), #8B6B1C);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font); font-size: 14px; font-weight: 800; color: var(--navy);
+  flex-shrink: 0;
+}
+.sec-title  { font-family: var(--font); font-size: 16px; font-weight: 700; color: var(--white); }
+.sec-sub    { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 2px; }
+
+.section-body { padding: 24px; }
+
+/* ── FORM ELEMENTS ── */
+.form-grid   { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.full        { grid-column: 1 / -1; }
+
+.field { margin-bottom: 16px; }
+.field label {
+  display: block; font-size: 11px; font-weight: 700; letter-spacing: .07em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+}
+.field input, .field select, .field textarea {
+  width: 100%; padding: 10px 13px;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  font-family: var(--body); font-size: 13px; color: var(--text);
+  background: var(--white); outline: none; transition: border-color .2s;
+}
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--gold); }
+.field input[type=number] { font-family: var(--mono); }
+.field textarea { resize: vertical; min-height: 72px; }
+.field .hint { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+/* ── CHECK GROUPS ── */
+.check-group-label {
+  font-size: 12px; font-weight: 700; color: var(--text2);
+  margin-bottom: 10px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--border); letter-spacing: .04em;
+}
+.check-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 8px; }
+.check-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 12px; border-radius: 8px;
+  background: var(--bg); border: 1.5px solid var(--border);
+  cursor: pointer; transition: all .15s; user-select: none;
+}
+.check-item:hover { border-color: var(--gold); background: var(--gold-l); }
+.check-item.checked { border-color: var(--green); background: var(--green-l); }
+.check-item input[type=checkbox] { display: none; }
+.check-box {
+  width: 18px; height: 18px; border-radius: 4px;
+  border: 2px solid var(--border); background: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all .15s;
+}
+.check-item.checked .check-box { background: var(--green); border-color: var(--green); }
+.check-item.checked .check-box::after { content:'✓'; color: white; font-size: 11px; font-weight: 700; }
+.check-label { font-size: 13px; color: var(--text2); }
+
+/* ── RADIO GROUPS ── */
+.radio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap: 8px; }
+.radio-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 12px; border-radius: 8px;
+  background: var(--bg); border: 1.5px solid var(--border);
+  cursor: pointer; transition: all .15s; user-select: none;
+}
+.radio-item:hover { border-color: var(--gold); }
+.radio-item.selected { border-color: var(--navy); background: var(--blue-l); }
+.radio-item input[type=radio] { display: none; }
+.radio-dot {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid var(--border); background: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all .15s;
+}
+.radio-item.selected .radio-dot { border-color: var(--navy); }
+.radio-item.selected .radio-dot::after {
+  content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--navy);
+}
+.radio-label { font-size: 13px; color: var(--text2); }
+
+/* ── PRIORITY SORT ── */
+.priority-list { display: flex; flex-direction: column; gap: 8px; }
+.priority-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; background: var(--bg); border-radius: 8px;
+  border: 1.5px solid var(--border); cursor: grab;
+}
+.priority-rank {
+  width: 26px; height: 26px; border-radius: 6px;
+  background: var(--navy); color: var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 12px; font-weight: 700;
+  flex-shrink: 0;
+}
+.priority-text { font-size: 13px; color: var(--text2); flex: 1; }
+.drag-handle { color: var(--muted); font-size: 14px; cursor: grab; }
+
+/* ── DIVIDER ── */
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+.divider-label {
+  text-align: center; position: relative;
+  font-size: 11px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--muted); margin: 20px 0;
+}
+.divider-label::before {
+  content: ''; position: absolute; top: 50%; left: 0; right: 0;
+  height: 1px; background: var(--border); z-index: 0;
+}
+.divider-label span {
+  position: relative; z-index: 1;
+  background: var(--white); padding: 0 12px;
+}
+
+/* ── NOTE BOX ── */
+.note {
+  background: var(--gold-l); border: 1px solid rgba(201,168,76,0.3);
+  border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0;
+  padding: 12px 16px; margin: 16px 0;
+  font-size: 12px; color: #5C4800; line-height: 1.6;
+}
+.note-info {
+  background: var(--blue-l); border-left-color: #185FA5; color: #0C447C;
+}
+.note strong { font-weight: 700; }
+
+/* ── NAVIGATION BUTTONS ── */
+.nav-btns {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 24px; background: var(--bg);
+  border-top: 1px solid var(--border);
+}
+.btn-nav {
+  display: flex; align-items: center; gap: 8px;
+  padding: 11px 22px; border-radius: 9px;
+  font-family: var(--font); font-size: 13px; font-weight: 600;
+  cursor: pointer; border: none; transition: all .2s;
+}
+.btn-prev { background: var(--white); color: var(--text2); border: 1.5px solid var(--border); }
+.btn-prev:hover { border-color: var(--navy); color: var(--navy); }
+.btn-next { background: var(--navy); color: white; }
+.btn-next:hover { background: var(--navy2); }
+.btn-submit { background: linear-gradient(135deg, var(--green), var(--green2)); color: white; padding: 13px 28px; }
+.btn-submit:hover { opacity: .9; }
+.step-indicator { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+
+/* ── SUCCESS PANEL ── */
+#success-panel {
+  display: none; text-align: center; padding: 60px 40px;
+  background: var(--white); border-radius: 14px;
+  border: 1px solid var(--border); box-shadow: var(--shadow);
+}
+.success-icon {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: var(--green-l); border: 3px solid var(--green);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; margin: 0 auto 20px;
+}
+.success-title { font-family: var(--font); font-size: 24px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+.success-sub   { font-size: 14px; color: var(--muted); max-width: 440px; margin: 0 auto 24px; }
+.success-record {
+  background: var(--bg); border-radius: 10px; padding: 16px 20px;
+  font-family: var(--mono); font-size: 12px; color: var(--text2);
+  max-width: 420px; margin: 0 auto 24px; text-align: left;
+  border: 1px solid var(--border);
+}
+.btn-new {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 24px; border-radius: 9px;
+  background: var(--navy); color: white; border: none;
+  font-family: var(--font); font-size: 13px; font-weight: 600;
+  cursor: pointer; margin: 6px;
+}
+
+/* ── TOAST ── */
+#toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--navy); color: white;
+  padding: 13px 20px; border-radius: 10px;
+  font-size: 13px; font-family: var(--body);
+  border-left: 3px solid var(--green);
+  opacity: 0; transform: translateY(8px);
+  transition: all .3s; z-index: 9999; max-width: 340px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+#toast.show { opacity: 1; transform: translateY(0); }
+#toast.error { border-left-color: var(--red); }
+
+/* ── LOADING SPINNER ── */
+.spinner {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.3); border-top-color: white;
+  animation: spin .7s linear infinite; display: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.btn-submit.loading .spinner { display: block; }
+.btn-submit.loading .btn-text { display: none; }
+
+/* ── PROGRESS BAR ── */
+.form-progress {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 10px 32px;
+}
+.progress-track {
+  height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; background: linear-gradient(90deg, var(--gold), var(--green));
+  border-radius: 2px; transition: width .4s ease;
+}
+
+@media (max-width: 600px) {
+  .form-grid, .form-grid-3 { grid-template-columns: 1fr; }
+  .container { padding: 16px 12px 60px; }
+  .top-banner { padding: 14px 16px; }
+  .config-bar { padding: 10px 16px; }
+  .progress-nav { padding: 0 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BANNER -->
+<div class="top-banner">
+  <div class="banner-logo">
+    <div class="banner-icon">AV</div>
+    <div>
+      <div class="banner-name">AsistenteAduanero VEN v2.0</div>
+      <div class="banner-sub">Sistema de Levantamiento de Datos</div>
+    </div>
+  </div>
+  <div class="banner-badge">Ficha de Valorador</div>
+</div>
+
+<!-- CONFIG BAR -->
+<div class="config-bar">
+  <label>Airtable Token (PAT):</label>
+  <input type="password" id="cfg-token" placeholder="pat..." autocomplete="off">
+  <button class="config-save" onclick="saveConfig()">Guardar credenciales</button>
+  <span id="cfg-status" style="font-size:11px;color:rgba(255,255,255,0.4);font-family:var(--mono)"></span>
+</div>
+
+<!-- PROGRESS -->
+<div class="form-progress">
+  <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:14%"></div></div>
+</div>
+
+<!-- NAV TABS -->
+<div class="progress-nav" id="progress-nav">
+  <div class="step-tab active" onclick="goStep(0)" id="stab-0"><span class="step-num">1</span>Identificación</div>
+  <div class="step-tab"        onclick="goStep(1)" id="stab-1"><span class="step-num">2</span>Flujo Actual</div>
+  <div class="step-tab"        onclick="goStep(2)" id="stab-2"><span class="step-num">3</span>Documentos</div>
+  <div class="step-tab"        onclick="goStep(3)" id="stab-3"><span class="step-num">4</span>Cálculos</div>
+  <div class="step-tab"        onclick="goStep(4)" id="stab-4"><span class="step-num">5</span>SIDUNEA</div>
+  <div class="step-tab"        onclick="goStep(5)" id="stab-5"><span class="step-num">6</span>Expectativas</div>
+  <div class="step-tab"        onclick="goStep(6)" id="stab-6"><span class="step-num">7</span>Tecnología</div>
+</div>
+
+<div class="container">
+
+<!-- ════════════════════════════════════════════
+     STEP 0 — IDENTIFICACIÓN
+════════════════════════════════════════════ -->
+<div class="section-card active" id="step-0">
+  <div class="section-header">
+    <div class="sec-num">01</div>
+    <div><div class="sec-title">Identificación de la Entrevista</div><div class="sec-sub">Datos básicos del valorador y la agencia</div></div>
+  </div>
+  <div class="section-body">
+    <div class="form-grid">
+      <div class="field full">
+        <label>Nombre completo del valorador / entrevistado *</label>
+        <input type="text" id="f-nombre" placeholder="Ej: María González Rodríguez" required>
+      </div>
+      <div class="field">
+        <label>Agencia Aduanal *</label>
+        <input type="text" id="f-agencia" placeholder="Ej: Agencia Martínez C.A.">
+      </div>
+      <div class="field">
+        <label>RIF</label>
+        <input type="text" id="f-rif" placeholder="J-XXXXXXXX-X">
+      </div>
+      <div class="field">
+        <label>Código Agente Aduanal</label>
+        <input type="text" id="f-codigo" placeholder="AA-XXXX">
+      </div>
+      <div class="field">
+        <label>Aduana Principal donde opera</label>
+        <select id="f-aduana">
+          <option value="">Seleccionar...</option>
+          <option>La Guaira</option>
+          <option>Puerto Cabello</option>
+          <option>Maiquetía (Aérea)</option>
+          <option>Maracaibo</option>
+          <option>San Antonio del Táchira</option>
+          <option>Guanta - Puerto La Cruz</option>
+          <option>Otra</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Teléfono / WhatsApp</label>
+        <input type="tel" id="f-telefono" placeholder="+58 XXX XXX XXXX">
+      </div>
+      <div class="field">
+        <label>Correo Electrónico</label>
+        <input type="email" id="f-correo" placeholder="agente@correo.com">
+      </div>
+      <div class="field">
+        <label>Años de experiencia en aduanas</label>
+        <input type="number" id="f-anos" min="0" max="50" placeholder="0">
+      </div>
+    </div>
+    <div class="note">
+      <strong>🎯 Objetivo:</strong> Identificar el perfil del valorador para personalizar la calibración del sistema OCR y ajustar los módulos de cálculo a su flujo de trabajo actual.
+    </div>
+  </div>
+  <div class="nav-btns">
+    <div></div>
+    <div style="display:flex;align-items:center;gap:16px">
+      <span class="step-indicator">Paso 1 de 7</span>
+      <button class="btn-nav btn-next" onclick="nextStep()">Siguiente →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     STEP 1 — FLUJO ACTUAL
+════════════════════════════════════════════ -->
+<div class="section-card" id="step-1">
+  <div class="section-header">
+    <div class="sec-num">02</div>
+    <div><div class="sec-title">Flujo Operativo Actual</div><div class="sec-sub">Volumen de trabajo y herramientas que usa hoy</div></div>
+  </div>
+  <div class="section-body">
+    <div class="form-grid-3">
+      <div class="field">
+        <label>Promedio docs / mes</label>
+        <input type="number" id="f-docs-prom" min="0" placeholder="0">
+      </div>
+      <div class="field">
+        <label>Docs en temporada alta</label>
+        <input type="number" id="f-docs-alta" min="0" placeholder="0">
+      </div>
+      <div class="field">
+        <label>Docs en temporada baja</label>
+        <input type="number" id="f-docs-baja" min="0" placeholder="0">
+      </div>
+    </div>
+
+    <div class="divider-label"><span>Tipos de documentos que procesa (marcar todos)</span></div>
+    <div class="check-grid" id="tipos-docs">
+      <label class="check-item"><input type="checkbox" value="Factura Comercial"><span class="check-box"></span><span class="check-label">Factura Comercial</span></label>
+      <label class="check-item"><input type="checkbox" value="Bill of Lading (B/L)"><span class="check-box"></span><span class="check-label">Bill of Lading (B/L)</span></label>
+      <label class="check-item"><input type="checkbox" value="Guía Aérea (AWB)"><span class="check-box"></span><span class="check-label">Guía Aérea (AWB)</span></label>
+      <label class="check-item"><input type="checkbox" value="Packing List"><span class="check-box"></span><span class="check-label">Packing List</span></label>
+      <label class="check-item"><input type="checkbox" value="DUA"><span class="check-box"></span><span class="check-label">DUA</span></label>
+      <label class="check-item"><input type="checkbox" value="Certificado de Origen"><span class="check-box"></span><span class="check-label">Certificado de Origen</span></label>
+      <label class="check-item"><input type="checkbox" value="Manifiesto de Carga"><span class="check-box"></span><span class="check-label">Manifiesto de Carga</span></label>
+      <label class="check-item"><input type="checkbox" value="Nota de Flete"><span class="check-box"></span><span class="check-label">Nota de Flete</span></label>
+    </div>
+
+    <div class="divider"></div>
+    <div class="form-grid">
+      <div class="field">
+        <label>Tiempo actual por declaración (minutos)</label>
+        <input type="number" id="f-tiempo-actual" min="0" placeholder="120">
+        <div class="hint">Proceso completo: recepción → carga en SIDUNEA</div>
+      </div>
+      <div class="field">
+        <label>Tiempo ideal que quisiera lograr (minutos)</label>
+        <input type="number" id="f-tiempo-ideal" min="0" placeholder="15">
+      </div>
+      <div class="field full">
+        <label>Software / herramientas actuales que usa</label>
+        <textarea id="f-software" placeholder="Ej: Excel para cálculos, Word para redactar, proceso manual, sistema interno de la agencia..."></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn-nav btn-prev" onclick="prevStep()">← Anterior</button>
+    <div style="display:flex;align-items:center;gap:16px">
+      <span class="step-indicator">Paso 2 de 7</span>
+      <button class="btn-nav btn-next" onclick="nextStep()">Siguiente →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     STEP 2 — DOCUMENTOS Y DATOS
+════════════════════════════════════════════ -->
+<div class="section-card" id="step-2">
+  <div class="section-header">
+    <div class="sec-num">03</div>
+    <div><div class="sec-title">Documentos y Datos Críticos</div><div class="sec-sub">Cómo recibe y procesa la información hoy</div></div>
+  </div>
+  <div class="section-body">
+    <div class="divider-label"><span>¿Cómo recibe los documentos? (marcar todos)</span></div>
+    <div class="check-grid" id="como-recibe">
+      <label class="check-item"><input type="checkbox" value="PDF por correo electrónico"><span class="check-box"></span><span class="check-label">PDF por correo electrónico</span></label>
+      <label class="check-item"><input type="checkbox" value="PDF escaneado físico"><span class="check-box"></span><span class="check-label">PDF escaneado físico</span></label>
+      <label class="check-item"><input type="checkbox" value="Excel / hoja de cálculo"><span class="check-box"></span><span class="check-label">Excel / hoja de cálculo</span></label>
+      <label class="check-item"><input type="checkbox" value="Sistema interno"><span class="check-box"></span><span class="check-label">Sistema interno</span></label>
+      <label class="check-item"><input type="checkbox" value="WhatsApp / Telegram"><span class="check-box"></span><span class="check-label">WhatsApp / Telegram</span></label>
+      <label class="check-item"><input type="checkbox" value="Impreso en papel"><span class="check-box"></span><span class="check-label">Impreso en papel</span></label>
+    </div>
+
+    <div class="divider"></div>
+    <div class="form-grid">
+      <div class="field full">
+        <label>¿Qué campos extrae manualmente de cada documento?</label>
+        <textarea id="f-campos-extrae" placeholder="Ej: NIT/RIF del proveedor, valor FOB, Incoterm, código arancelario, descripción de mercancía, B/L..."></textarea>
+      </div>
+      <div class="field full">
+        <label>¿Cuál campo le genera más errores o pérdida de tiempo?</label>
+        <textarea id="f-campo-errores" placeholder="Ej: el código arancelario NANDINA me toma mucho tiempo porque tengo que consultar el arancel manualmente..." style="background:#FDF0F0;border-color:#F9C3C3"></textarea>
+      </div>
+      <div class="field">
+        <label>¿Cómo determina el código arancelario NANDINA?</label>
+        <textarea id="f-arancel-metodo" placeholder="Ej: consulta manual en el libro, tabla propia en Excel, pregunto a un colega, sistema..."></textarea>
+      </div>
+      <div class="field">
+        <label>¿Consulta precios de referencia SENIAT? ¿Cómo?</label>
+        <textarea id="f-precios-seniat" placeholder="Ej: sí, en la web del SENIAT, tengo tabla guardada, no suelo consultar..."></textarea>
+      </div>
+      <div class="field full">
+        <label>¿Dónde guarda el historial de operaciones pasadas?</label>
+        <textarea id="f-historial" placeholder="Ej: carpetas en mi PC organizadas por cliente, Excel compartido, ningún sistema, todo en papel..."></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn-nav btn-prev" onclick="prevStep()">← Anterior</button>
+    <div style="display:flex;align-items:center;gap:16px">
+      <span class="step-indicator">Paso 3 de 7</span>
+      <button class="btn-nav btn-next" onclick="nextStep()">Siguiente →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     STEP 3 — CÁLCULOS Y TRIBUTOS
+════════════════════════════════════════════ -->
+<div class="section-card" id="step-3">
+  <div class="section-header">
+    <div class="sec-num">04</div>
+    <div><div class="sec-title">Cálculos y Tributos Venezuela</div><div class="sec-sub">CIF, Ad-Valorem, IVA y normativa venezolana</div></div>
+  </div>
+  <div class="section-body">
+    <div class="divider-label"><span>¿Cuáles cálculos realiza actualmente? (marcar todos)</span></div>
+    <div class="check-grid">
+      <label class="check-item" id="chk-cif-wrap"><input type="checkbox" id="chk-cif"><span class="check-box"></span><span class="check-label">CIF = FOB + Flete + Seguro</span></label>
+      <label class="check-item" id="chk-adval-wrap"><input type="checkbox" id="chk-adval"><span class="check-box"></span><span class="check-label">Ad-Valorem (% NANDINA)</span></label>
+      <label class="check-item" id="chk-iva-wrap"><input type="checkbox" id="chk-iva"><span class="check-box"></span><span class="check-label">IVA 16% (Base LIVA)</span></label>
+      <label class="check-item" id="chk-tasa-wrap"><input type="checkbox" id="chk-tasa"><span class="check-box"></span><span class="check-label">Tasa Aduanera (Art. 121)</span></label>
+      <label class="check-item" id="chk-total-wrap"><input type="checkbox" id="chk-total"><span class="check-box"></span><span class="check-label">Total Tributos</span></label>
+    </div>
+
+    <div class="divider"></div>
+    <div class="form-grid">
+      <div class="field">
+        <label>¿Cómo estima el seguro cuando el proveedor no lo indica?</label>
+        <input type="text" id="f-seguro-metodo" placeholder="Ej: FOB × 1%, tabla propia, consulto al cliente...">
+      </div>
+      <div class="field">
+        <label>¿Cuál es su fuente de la tasa BCV?</label>
+        <input type="text" id="f-bcv-fuente" placeholder="Ej: web BCV, banco, app de cambio...">
+      </div>
+      <div class="field">
+        <label>Tiempo promedio que tarda en hacer los cálculos (min)</label>
+        <input type="number" id="f-tiempo-calculos" min="0" placeholder="0">
+      </div>
+      <div class="field">
+        <label>¿Ha tenido rechazos por errores en tributos?</label>
+        <div class="radio-grid" style="margin-top:6px" id="radio-rechazos">
+          <label class="radio-item"><input type="radio" name="rechazos" value="Si, frecuente"><span class="radio-dot"></span><span class="radio-label">Sí, frecuente</span></label>
+          <label class="radio-item"><input type="radio" name="rechazos" value="No / Raro"><span class="radio-dot"></span><span class="radio-label">No / Raro</span></label>
+        </div>
+      </div>
+      <div class="field full">
+        <label>Si hubo rechazos, ¿por qué campo fue generalmente?</label>
+        <input type="text" id="f-campo-rechazo" placeholder="Ej: código arancelario incorrecto, valor CIF distinto al declarado...">
+      </div>
+    </div>
+    <div class="note">
+      <strong>ℹ️ La app calcula automáticamente:</strong> CIF = FOB + Flete + Seguro · Ad-Valorem por capítulo NANDINA · Tasa Aduanera 1% (Art. 121 LOA) · Base IVA (LIVA Art. 16) · IVA 16%. Los datos recogidos aquí calibran las tasas por defecto.
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn-nav btn-prev" onclick="prevStep()">← Anterior</button>
+    <div style="display:flex;align-items:center;gap:16px">
+      <span class="step-indicator">Paso 4 de 7</span>
+      <button class="btn-nav btn-next" onclick="nextStep()">Siguiente →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     STEP 4 — SIDUNEA WORLD
+════════════════════════════════════════════ -->
+<div class="section-card" id="step-4">
+  <div class="section-header">
+    <div class="sec-num">05</div>
+    <div><div class="sec-title">SIDUNEA World / SENIAT</div><div class="sec-sub">Uso actual del sistema aduanero venezolano</div></div>
+  </div>
+  <div class="section-body">
+    <div class="form-grid">
+      <div class="field">
+        <label>¿Tiene acceso activo a SIDUNEA World?</label>
+        <div class="radio-grid" style="margin-top:6px" id="radio-sidunea-acceso">
+          <label class="radio-item"><input type="radio" name="sidunea-acceso" value="Acceso propio"><span class="radio-dot"></span><span class="radio-label">Sí, acceso propio</span></label>
+          <label class="radio-item"><input type="radio" name="sidunea-acceso" value="Por colega"><span class="radio-dot"></span><span class="radio-label">Por un colega</span></label>
+          <label class="radio-item"><input type="radio" name="sidunea-acceso" value="No tiene"><span class="radio-dot"></span><span class="radio-label">No tiene</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label>¿Con qué frecuencia carga en SIDUNEA?</label>
+        <input type="text" id="f-sidunea-freq" placeholder="Ej: diario, 2-3 veces por semana...">
+      </div>
+    </div>
+
+    <div class="divider-label"><span>Campos de SIDUNEA donde más comete errores o pierde tiempo</span></div>
+    <div class="check-grid" id="sidunea-campos">
+      <label class="check-item"><input type="checkbox" value="Campo 7 - Referencia (B/L)"><span class="check-box"></span><span class="check-label">Campo 7 — Referencia (B/L)</span></label>
+      <label class="check-item"><input type="checkbox" value="Campo 20 - Incoterm"><span class="check-box"></span><span class="check-label">Campo 20 — Incoterm</span></label>
+      <label class="check-item"><input type="checkbox" value="Campo 22 - Moneda"><span class="check-box"></span><span class="check-label">Campo 22 — Moneda</span></label>
+      <label class="check-item"><input type="checkbox" value="Campo 31 - Descripción mercancía"><span class="check-box"></span><span class="check-label">Campo 31 — Descripción</span></label>
+      <label class="check-item"><input type="checkbox" value="Campo 33 - Código arancelario"><span class="check-box"></span><span class="check-label">Campo 33 — Cód. Arancelario</span></label>
+      <label class="check-item"><input type="checkbox" value="Campo 42 - Valor FOB"><span class="check-box"></span><span class="check-label">Campo 42 — Valor FOB</span></label>
+      <label class="check-item"><input type="checkbox" value="Campo 44 - Flete"><span class="check-box"></span><span class="check-label">Campo 44 — Flete</span></label>
+      <label class="check-item"><input type="checkbox" value="Campo 46 - Valor CIF"><span class="check-box"></span><span class="check-label">Campo 46 — Valor CIF</span></label>
+    </div>
+
+    <div class="divider"></div>
+    <div class="form-grid">
+      <div class="field">
+        <label>¿Cómo copia los datos de documentos a SIDUNEA?</label>
+        <textarea id="f-como-copia" placeholder="Ej: transcribo manualmente campo por campo, tengo plantilla, copia-pego desde Excel..."></textarea>
+      </div>
+      <div class="field">
+        <label>¿Ha tenido rechazos en SIDUNEA? ¿Por qué?</label>
+        <textarea id="f-rechazos-sidunea" placeholder="Ej: sí, por código arancelario incorrecto, por valor CIF distinto al de la factura..."></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn-nav btn-prev" onclick="prevStep()">← Anterior</button>
+    <div style="display:flex;align-items:center;gap:16px">
+      <span class="step-indicator">Paso 5 de 7</span>
+      <button class="btn-nav btn-next" onclick="nextStep()">Siguiente →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     STEP 5 — EXPECTATIVAS
+════════════════════════════════════════════ -->
+<div class="section-card" id="step-5">
+  <div class="section-header">
+    <div class="sec-num">06</div>
+    <div><div class="sec-title">Pain Points y Expectativas</div><div class="sec-sub">Qué necesita y cuánto pagaría</div></div>
+  </div>
+  <div class="section-body">
+    <div class="form-grid">
+      <div class="field full">
+        <label>¿Cuál es el mayor cuello de botella en su proceso actual?</label>
+        <textarea id="f-bottleneck" placeholder="Describa el principal problema que frena su productividad..." style="min-height:88px;background:#FDF0F0;border-color:#F9C3C3"></textarea>
+      </div>
+      <div class="field">
+        <label>Horas perdidas por semana en tareas repetitivas</label>
+        <input type="number" id="f-horas-perdidas" min="0" step="0.5" placeholder="0.0">
+      </div>
+    </div>
+
+    <div class="divider-label"><span>Ordena estas funciones por importancia (arrastra para reordenar)</span></div>
+    <div class="priority-list" id="priority-list">
+      <div class="priority-item" draggable="true" data-val="Extracción automática OCR con IA"><span class="drag-handle">⠿</span><span class="priority-rank">1</span><span class="priority-text">Extracción automática de datos de PDFs (OCR con IA)</span></div>
+      <div class="priority-item" draggable="true" data-val="Cálculo automático CIF y tributos venezolanos"><span class="drag-handle">⠿</span><span class="priority-rank">2</span><span class="priority-text">Cálculo automático CIF + tributos venezolanos</span></div>
+      <div class="priority-item" draggable="true" data-val="Carga directa a SIDUNEA World"><span class="drag-handle">⠿</span><span class="priority-rank">3</span><span class="priority-text">Carga directa / copiado a SIDUNEA World</span></div>
+      <div class="priority-item" draggable="true" data-val="Historial de declaraciones anteriores"><span class="drag-handle">⠿</span><span class="priority-rank">4</span><span class="priority-text">Historial y búsqueda de declaraciones anteriores</span></div>
+      <div class="priority-item" draggable="true" data-val="Alertas de errores antes de enviar a SENIAT"><span class="drag-handle">⠿</span><span class="priority-rank">5</span><span class="priority-text">Alertas de errores antes de enviar a SENIAT</span></div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="form-grid">
+      <div class="field full">
+        <label>¿Qué función nueva le gustaría tener que hoy no existe?</label>
+        <textarea id="f-funcion-nueva" placeholder="Idea libre..."></textarea>
+      </div>
+      <div class="field">
+        <label>¿Cuánto pagaría mensualmente por esta herramienta?</label>
+        <div class="radio-grid" id="radio-precio" style="grid-template-columns:1fr 1fr;margin-top:6px">
+          <label class="radio-item"><input type="radio" name="precio" value="$20-$40/mes"><span class="radio-dot"></span><span class="radio-label">$20 – $40 / mes</span></label>
+          <label class="radio-item"><input type="radio" name="precio" value="$40-$80/mes"><span class="radio-dot"></span><span class="radio-label">$40 – $80 / mes</span></label>
+          <label class="radio-item"><input type="radio" name="precio" value="$80-$150/mes"><span class="radio-dot"></span><span class="radio-label">$80 – $150 / mes</span></label>
+          <label class="radio-item"><input type="radio" name="precio" value="Mas de $150/mes"><span class="radio-dot"></span><span class="radio-label">Más de $150 / mes</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label>¿Prefiere pago mensual o anual con descuento?</label>
+        <div class="radio-grid" style="margin-top:6px" id="radio-modalidad">
+          <label class="radio-item"><input type="radio" name="modalidad" value="Mensual"><span class="radio-dot"></span><span class="radio-label">Mensual</span></label>
+          <label class="radio-item"><input type="radio" name="modalidad" value="Anual"><span class="radio-dot"></span><span class="radio-label">Anual (descuento)</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn-nav btn-prev" onclick="prevStep()">← Anterior</button>
+    <div style="display:flex;align-items:center;gap:16px">
+      <span class="step-indicator">Paso 6 de 7</span>
+      <button class="btn-nav btn-next" onclick="nextStep()">Siguiente →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     STEP 6 — TECNOLOGÍA + OBSERVACIONES
+════════════════════════════════════════════ -->
+<div class="section-card" id="step-6">
+  <div class="section-header">
+    <div class="sec-num">07</div>
+    <div><div class="sec-title">Tecnología, Airtable y Observaciones</div><div class="sec-sub">Infraestructura y notas finales</div></div>
+  </div>
+  <div class="section-body">
+    <div class="form-grid">
+      <div class="field">
+        <label>Sistema operativo principal</label>
+        <div class="radio-grid" style="margin-top:6px" id="radio-so">
+          <label class="radio-item"><input type="radio" name="so" value="Windows 10/11"><span class="radio-dot"></span><span class="radio-label">Windows 10/11</span></label>
+          <label class="radio-item"><input type="radio" name="so" value="Mac/Linux"><span class="radio-dot"></span><span class="radio-label">Mac / Linux</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Conexión a internet en la agencia</label>
+        <div class="radio-grid" style="margin-top:6px" id="radio-internet">
+          <label class="radio-item"><input type="radio" name="internet" value="Banda ancha estable"><span class="radio-dot"></span><span class="radio-label">Banda ancha estable</span></label>
+          <label class="radio-item"><input type="radio" name="internet" value="Inestable / datos moviles"><span class="radio-dot"></span><span class="radio-label">Inestable / datos móviles</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label>¿Cuántas personas procesarían documentos?</label>
+        <input type="number" id="f-usuarios" min="1" placeholder="1">
+      </div>
+      <div class="field">
+        <label>¿Aceptaría instalar un programa (.exe) en sus equipos?</label>
+        <div class="radio-grid" style="margin-top:6px" id="radio-exe">
+          <label class="radio-item"><input type="radio" name="exe" value="Si, sin problema"><span class="radio-dot"></span><span class="radio-label">Sí, sin problema</span></label>
+          <label class="radio-item"><input type="radio" name="exe" value="Prefiere web/app"><span class="radio-dot"></span><span class="radio-label">Prefiere versión web</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider-label"><span>Datos y gestión de información</span></div>
+    <div class="check-grid">
+      <label class="check-item" id="chk-usa-airtable-wrap"><input type="checkbox" id="chk-usa-airtable"><span class="check-box"></span><span class="check-label">Ya usa Airtable</span></label>
+      <label class="check-item" id="chk-necesita-bd-wrap"><input type="checkbox" id="chk-necesita-bd"><span class="check-box"></span><span class="check-label">Necesita base de datos central</span></label>
+    </div>
+
+    <div class="field" style="margin-top:16px">
+      <label>Campos adicionales que desearía guardar en Airtable</label>
+      <textarea id="f-campos-adicionales" placeholder="Ej: cliente / importador, estado del despacho, fecha de entrega, observaciones..."></textarea>
+    </div>
+
+    <div class="divider"></div>
+    <div class="form-grid">
+      <div class="field full">
+        <label>Observaciones del entrevistador</label>
+        <textarea id="f-observaciones" style="min-height:100px" placeholder="Notas adicionales, contexto, comentarios relevantes de la entrevista..."></textarea>
+      </div>
+      <div class="field full">
+        <label>Documentos de ejemplo recibidos (PDFs, Excel, etc.)</label>
+        <textarea id="f-docs-ejemplo" placeholder="Ej: Factura Comercial de proveedor chino, B/L marítimo, DUA de importación anterior..."></textarea>
+      </div>
+      <div class="field">
+        <label>Número de ficha</label>
+        <input type="text" id="f-num-ficha" placeholder="F-001">
+        <div class="hint">Se genera automáticamente si se deja vacío</div>
+      </div>
+    </div>
+
+    <div class="note note-info">
+      <strong>🔒 Privacidad:</strong> Los datos se guardan directamente en tu base de Airtable (<code>appDmFj4Ptp7ZnGBy</code>) en la tabla <strong>Ficha de Valorador</strong>. Solo tú tienes acceso con tu token PAT.
+    </div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn-nav btn-prev" onclick="prevStep()">← Anterior</button>
+    <div style="display:flex;align-items:center;gap:16px">
+      <span class="step-indicator">Paso 7 de 7</span>
+      <button class="btn-nav btn-submit" onclick="submitForm()" id="btn-submit">
+        <span class="btn-text">⬆ Guardar en Airtable</span>
+        <div class="spinner"></div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div id="success-panel">
+  <div class="success-icon">✓</div>
+  <div class="success-title">¡Ficha guardada exitosamente!</div>
+  <div class="success-sub">Los datos del valorador se han guardado en Airtable en la tabla <strong>Ficha de Valorador</strong> dentro de tu base OPERACIONES/EMBARQUES.</div>
+  <div class="success-record" id="success-record"></div>
+  <button class="btn-new" onclick="resetForm()">+ Nueva ficha</button>
+  <a class="btn-new" href="https://airtable.com/appDmFj4Ptp7ZnGBy" target="_blank" style="text-decoration:none;background:var(--navy2)">Ver en Airtable →</a>
+</div>
+
+</div><!-- /container -->
+<div id="toast"></div>
+
+<script>
+// ── Config ─────────────────────────────────────────────────────────────────
+const BASE_ID  = 'appDmFj4Ptp7ZnGBy';
+const TABLE_NAME = 'Ficha de Valorador';
+let TABLE_ID = 'tblq5ReZI9uxuSbZ7';
+let PAT = 'patiH422LAfdQ9W3m.11c17181fe858783f0fa43214371ae10553cd200ddbe7cf0b5c251e9bf39fa2b';
+
+function saveConfig() {
+  PAT = document.getElementById('cfg-token').value.trim();
+  if (PAT) {
+    localStorage.setItem('av_pat', PAT);
+    document.getElementById('cfg-status').textContent = '✓ Token guardado';
+    toast('✓ Credenciales guardadas correctamente');
+  }
+}
+function loadConfig() {
+  PAT = localStorage.getItem('av_pat') || '';
+  if (PAT) {
+    document.getElementById('cfg-token').value = PAT;
+    document.getElementById('cfg-status').textContent = '✓ Token cargado';
+  }
+}
+loadConfig();
+
+// ── Toast ──────────────────────────────────────────────────────────────────
+function toast(msg, isError=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show' + (isError ? ' error' : '');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.className = '', 3800);
+}
+
+// ── Steps ──────────────────────────────────────────────────────────────────
+let currentStep = 0;
+const TOTAL_STEPS = 7;
+
+function goStep(n) {
+  document.getElementById('step-' + currentStep).classList.remove('active');
+  document.getElementById('stab-' + currentStep).classList.remove('active');
+  currentStep = n;
+  document.getElementById('step-' + currentStep).classList.add('active');
+  const tab = document.getElementById('stab-' + currentStep);
+  tab.classList.add('active');
+  tab.classList.remove('done');
+  document.getElementById('progress-fill').style.width = Math.round(((currentStep+1)/TOTAL_STEPS)*100) + '%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function nextStep() {
+  if (currentStep === 0 && !document.getElementById('f-nombre').value.trim()) {
+    toast('Por favor ingresa el nombre del valorador', true); return;
+  }
+  const prev = document.getElementById('stab-' + currentStep);
+  prev.classList.remove('active'); prev.classList.add('done');
+  prev.querySelector('.step-num').textContent = '✓';
+  if (currentStep < TOTAL_STEPS - 1) goStep(currentStep + 1);
+}
+function prevStep() {
+  if (currentStep > 0) {
+    const cur = document.getElementById('stab-' + currentStep);
+    cur.classList.remove('done', 'active');
+    cur.querySelector('.step-num').textContent = currentStep + 1;
+    goStep(currentStep - 1);
+  }
+}
+
+// ── Checkboxes & Radios ────────────────────────────────────────────────────
+document.querySelectorAll('.check-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const cb = item.querySelector('input[type=checkbox]');
+    cb.checked = !cb.checked;
+    item.classList.toggle('checked', cb.checked);
+  });
+});
+
+document.querySelectorAll('.radio-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const rb = item.querySelector('input[type=radio]');
+    const name = rb.name;
+    document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+      r.closest('.radio-item').classList.remove('selected');
+    });
+    rb.checked = true;
+    item.classList.add('selected');
+  });
+});
+
+// ── Drag-sort priorities ────────────────────────────────────────────────────
+let dragEl = null;
+document.querySelectorAll('.priority-item').forEach(item => {
+  item.addEventListener('dragstart', () => { dragEl = item; item.style.opacity = '0.4'; });
+  item.addEventListener('dragend',   () => { dragEl = null; item.style.opacity = '1'; updateRanks(); });
+  item.addEventListener('dragover',  e => { e.preventDefault(); });
+  item.addEventListener('drop', e => {
+    e.preventDefault();
+    if (dragEl && dragEl !== item) {
+      const list = item.parentNode;
+      const allItems = [...list.children];
+      const dragIdx = allItems.indexOf(dragEl);
+      const dropIdx = allItems.indexOf(item);
+      if (dragIdx < dropIdx) list.insertBefore(dragEl, item.nextSibling);
+      else list.insertBefore(dragEl, item);
+    }
+  });
+});
+function updateRanks() {
+  document.querySelectorAll('.priority-item').forEach((item, i) => {
+    item.querySelector('.priority-rank').textContent = i + 1;
+  });
+}
+
+// ── Collect values ─────────────────────────────────────────────────────────
+function getChecked(containerId) {
+  return [...document.querySelectorAll(`#${containerId} input[type=checkbox]:checked`)]
+    .map(c => c.value).join(', ');
+}
+function getCheckedSingle(cbId) {
+  return document.getElementById(cbId)?.checked || false;
+}
+function getRadio(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : '';
+}
+function getPriorities() {
+  return [...document.querySelectorAll('#priority-list .priority-item')]
+    .map((el,i) => `${i+1}. ${el.dataset.val}`).join('\n');
+}
+function val(id) { return (document.getElementById(id)?.value || '').trim(); }
+function num(id) { const v = parseFloat(val(id)); return isNaN(v) ? null : v; }
+
+function buildRecord() {
+  const ficha = val('f-num-ficha') || 'F-' + String(Date.now()).slice(-5);
+  return {
+    'Nombre del Valorador': val('f-nombre'),
+    'Agencia Aduanal':      val('f-agencia'),
+    'RIF':                  val('f-rif'),
+    'Codigo Agente':        val('f-codigo'),
+    'Aduana Principal':     val('f-aduana'),
+    'Telefono':             val('f-telefono'),
+    'Correo':               val('f-correo'),
+    'Anos Experiencia':     num('f-anos'),
+    'Docs Promedio Mes':    num('f-docs-prom'),
+    'Docs Temporada Alta':  num('f-docs-alta'),
+    'Docs Temporada Baja':  num('f-docs-baja'),
+    'Tipos Documentos':     getChecked('tipos-docs'),
+    'Como Recibe Documentos': getChecked('como-recibe'),
+    'Tiempo Actual Por Doc Min': num('f-tiempo-actual'),
+    'Tiempo Ideal Por Doc Min':  num('f-tiempo-ideal'),
+    'Software Actual':       val('f-software'),
+    'Campo Con Mas Errores': val('f-campo-errores'),
+    'Como Determina Arancel':val('f-arancel-metodo'),
+    'Consulta Precios SENIAT':val('f-precios-seniat'),
+    'Donde Guarda Historial': val('f-historial'),
+    'Calcula CIF':     getCheckedSingle('chk-cif'),
+    'Calcula AdValorem':getCheckedSingle('chk-adval'),
+    'Calcula IVA':     getCheckedSingle('chk-iva'),
+    'Como Estima Seguro': val('f-seguro-metodo'),
+    'Fuente Tasa BCV':    val('f-bcv-fuente'),
+    'Tiempo Calculos Min':num('f-tiempo-calculos'),
+    'Rechazos Por Tributos': getRadio('rechazos'),
+    'Campo Rechazo Frecuente':val('f-campo-rechazo'),
+    'Acceso SIDUNEA':    getRadio('sidunea-acceso'),
+    'Frecuencia SIDUNEA':val('f-sidunea-freq'),
+    'Campos SIDUNEA Con Errores':getChecked('sidunea-campos'),
+    'Como Copia A SIDUNEA':  val('f-como-copia'),
+    'Rechazos SIDUNEA':      val('f-rechazos-sidunea'),
+    'Mayor Cuello Botella':  val('f-bottleneck'),
+    'Horas Perdidas Semana': num('f-horas-perdidas'),
+    'Funciones Prioritarias':getPriorities(),
+    'Funcion Deseada Nueva': val('f-funcion-nueva'),
+    'Rango Precio Mensual':  getRadio('precio'),
+    'Modalidad Pago':        getRadio('modalidad'),
+    'Sistema Operativo':     getRadio('so'),
+    'Conexion Internet':     getRadio('internet'),
+    'Usuarios En Agencia':   num('f-usuarios'),
+    'Acepta Instalar EXE':   getRadio('exe'),
+    'Usa Airtable':          getCheckedSingle('chk-usa-airtable'),
+    'Necesita Base Datos Central': getCheckedSingle('chk-necesita-bd'),
+    'Campos Adicionales Airtable': val('f-campos-adicionales'),
+    'Observaciones':          val('f-observaciones'),
+    'Documentos Ejemplo Recibidos': val('f-docs-ejemplo'),
+    'Numero Ficha':           ficha,
+    'Estado':                 'Enviada',
+  };
+}
+
+// ── Get or Create Table ─────────────────────────────────────────────────────
+async function ensureTable() {
+  if (TABLE_ID) return TABLE_ID;
+  // Try to get tables list
+  const res = await fetch(`https://api.airtable.com/v0/meta/bases/${BASE_ID}/tables`, {
+    headers: { 'Authorization': `Bearer ${PAT}` }
+  });
+  if (!res.ok) throw new Error('No se pudo acceder a la base. Verifica tu token PAT.');
+  const data = await res.json();
+  const existing = data.tables.find(t => t.name === TABLE_NAME);
+  if (existing) { TABLE_ID = existing.id; return TABLE_ID; }
+
+  // Create table
+  const fields = [
+    {name:'Nombre del Valorador',type:'singleLineText'},
+    {name:'Agencia Aduanal',type:'singleLineText'},
+    {name:'RIF',type:'singleLineText'},
+    {name:'Codigo Agente',type:'singleLineText'},
+    {name:'Aduana Principal',type:'singleLineText'},
+    {name:'Telefono',type:'singleLineText'},
+    {name:'Correo',type:'singleLineText'},
+    {name:'Anos Experiencia',type:'number',options:{precision:0}},
+    {name:'Docs Promedio Mes',type:'number',options:{precision:0}},
+    {name:'Docs Temporada Alta',type:'number',options:{precision:0}},
+    {name:'Docs Temporada Baja',type:'number',options:{precision:0}},
+    {name:'Tipos Documentos',type:'multilineText'},
+    {name:'Como Recibe Documentos',type:'multilineText'},
+    {name:'Tiempo Actual Por Doc Min',type:'number',options:{precision:0}},
+    {name:'Tiempo Ideal Por Doc Min',type:'number',options:{precision:0}},
+    {name:'Software Actual',type:'multilineText'},
+    {name:'Campo Con Mas Errores',type:'multilineText'},
+    {name:'Como Determina Arancel',type:'multilineText'},
+    {name:'Consulta Precios SENIAT',type:'multilineText'},
+    {name:'Donde Guarda Historial',type:'multilineText'},
+    {name:'Calcula CIF',type:'checkbox',options:{color:'greenBright',icon:'check'}},
+    {name:'Calcula AdValorem',type:'checkbox',options:{color:'greenBright',icon:'check'}},
+    {name:'Calcula IVA',type:'checkbox',options:{color:'greenBright',icon:'check'}},
+    {name:'Como Estima Seguro',type:'singleLineText'},
+    {name:'Fuente Tasa BCV',type:'singleLineText'},
+    {name:'Tiempo Calculos Min',type:'number',options:{precision:0}},
+    {name:'Rechazos Por Tributos',type:'singleSelect',options:{choices:[{name:'Si, frecuente'},{name:'No / Raro'}]}},
+    {name:'Campo Rechazo Frecuente',type:'singleLineText'},
+    {name:'Acceso SIDUNEA',type:'singleSelect',options:{choices:[{name:'Acceso propio'},{name:'Por colega'},{name:'No tiene'}]}},
+    {name:'Frecuencia SIDUNEA',type:'singleLineText'},
+    {name:'Campos SIDUNEA Con Errores',type:'multilineText'},
+    {name:'Como Copia A SIDUNEA',type:'multilineText'},
+    {name:'Rechazos SIDUNEA',type:'multilineText'},
+    {name:'Mayor Cuello Botella',type:'multilineText'},
+    {name:'Horas Perdidas Semana',type:'number',options:{precision:1}},
+    {name:'Funciones Prioritarias',type:'multilineText'},
+    {name:'Funcion Deseada Nueva',type:'multilineText'},
+    {name:'Rango Precio Mensual',type:'singleSelect',options:{choices:[{name:'$20-$40/mes'},{name:'$40-$80/mes'},{name:'$80-$150/mes'},{name:'Mas de $150/mes'}]}},
+    {name:'Modalidad Pago',type:'singleSelect',options:{choices:[{name:'Mensual'},{name:'Anual'}]}},
+    {name:'Sistema Operativo',type:'singleSelect',options:{choices:[{name:'Windows 10/11'},{name:'Mac/Linux'}]}},
+    {name:'Conexion Internet',type:'singleSelect',options:{choices:[{name:'Banda ancha estable'},{name:'Inestable / datos moviles'}]}},
+    {name:'Usuarios En Agencia',type:'number',options:{precision:0}},
+    {name:'Acepta Instalar EXE',type:'singleSelect',options:{choices:[{name:'Si, sin problema'},{name:'Prefiere web/app'}]}},
+    {name:'Usa Airtable',type:'checkbox',options:{color:'blueBright',icon:'check'}},
+    {name:'Necesita Base Datos Central',type:'checkbox',options:{color:'blueBright',icon:'check'}},
+    {name:'Campos Adicionales Airtable',type:'multilineText'},
+    {name:'Observaciones',type:'multilineText'},
+    {name:'Documentos Ejemplo Recibidos',type:'multilineText'},
+    {name:'Numero Ficha',type:'singleLineText'},
+    {name:'Estado',type:'singleSelect',options:{choices:[{name:'Enviada'},{name:'Pendiente revision'},{name:'Completada'}]}}
+  ];
+
+  const createRes = await fetch(`https://api.airtable.com/v0/meta/bases/${BASE_ID}/tables`, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${PAT}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: TABLE_NAME, description: 'Datos de levantamiento de valoradores aduaneros - AsistenteAduanero VEN v2.0', fields })
+  });
+  if (!createRes.ok) {
+    const err = await createRes.json();
+    throw new Error('Error creando tabla: ' + (err.error?.message || JSON.stringify(err)));
+  }
+  const tbl = await createRes.json();
+  TABLE_ID = tbl.id;
+  toast('✓ Tabla "Ficha de Valorador" creada en Airtable');
+  return TABLE_ID;
+}
+
+// ── Submit ─────────────────────────────────────────────────────────────────
+async function submitForm() {
+  if (!PAT) {
+    toast('⚠ Ingresa tu token de Airtable en la barra superior', true);
+    document.getElementById('cfg-token').focus();
+    return;
+  }
+  if (!val('f-nombre')) {
+    toast('El nombre del valorador es obligatorio', true); return;
+  }
+
+  const btn = document.getElementById('btn-submit');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  try {
+    toast('Conectando con Airtable...');
+    const tblId = await ensureTable();
+    toast('Guardando datos...');
+
+    const record = buildRecord();
+    // Remove null/empty values
+    const fields = {};
+    Object.entries(record).forEach(([k,v]) => {
+      if (v !== null && v !== undefined && v !== '') fields[k] = v;
+    });
+
+    const res = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${tblId}`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${PAT}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ records: [{ fields }] })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || 'Error al guardar el registro');
+    }
+    const data = await res.json();
+    const recId = data.records[0].id;
+
+    // Show success
+    document.querySelectorAll('.section-card').forEach(c => c.classList.remove('active'));
+    document.getElementById('success-panel').style.display = 'block';
+    document.getElementById('success-record').innerHTML =
+      `<strong>Valorador:</strong> ${record['Nombre del Valorador']}<br>` +
+      `<strong>Agencia:</strong>   ${record['Agencia Aduanal'] || '—'}<br>` +
+      `<strong>Ficha N°:</strong>  ${record['Numero Ficha']}<br>` +
+      `<strong>Record ID:</strong> ${recId}<br>` +
+      `<strong>Tabla:</strong>     Ficha de Valorador`;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  } catch(e) {
+    toast('Error: ' + e.message, true);
+    console.error(e);
+  } finally {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+}
+
+// ── Reset ──────────────────────────────────────────────────────────────────
+function resetForm() {
+  document.getElementById('success-panel').style.display = 'none';
+  document.querySelectorAll('input[type=text],input[type=email],input[type=tel],input[type=number],textarea').forEach(el => el.value = '');
+  document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+  document.querySelectorAll('.check-item').forEach(el => { el.classList.remove('checked'); el.querySelector('input').checked = false; });
+  document.querySelectorAll('.radio-item').forEach(el => { el.classList.remove('selected'); el.querySelector('input').checked = false; });
+  document.querySelectorAll('#stab-0,#stab-1,#stab-2,#stab-3,#stab-4,#stab-5,#stab-6').forEach((t,i) => {
+    t.className = 'step-tab' + (i===0?' active':'');
+    t.querySelector('.step-num').textContent = i+1;
+  });
+  currentStep = 0;
+  document.getElementById('step-0').classList.add('active');
+  document.getElementById('progress-fill').style.width = '14%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
